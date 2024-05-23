@@ -1,0 +1,201 @@
+﻿@page "/libros"
+@using System.Collections.Generic
+@using Biblioteca
+
+<h3>Gestión de Libros</h3>
+
+<div>
+    <label for="tipoMaterial">Tipo de Material:</label>
+    <select @bind="tipoMaterial" id="tipoMaterial">
+        <option value="Libro">Libro</option>
+        <option value="Revista">Revista</option>
+        <option value="LibroElectronico">Libro Electrónico</option>
+    </select>
+</div>
+
+@if (tipoMaterial == "Libro")
+{
+    <table>
+        <tr>
+            <td><label for="titulo">Título:</label></td>
+            <td><input type="text" @bind="titulo" id="titulo" /></td>
+        </tr>
+        <tr>
+            <td><label for="autor">Autor:</label></td>
+            <td><input type="text" @bind="autor" id="autor" /></td>
+        </tr>
+        <tr>
+            <td><label for="genero">Género:</label></td>
+            <td><input type="text" @bind="genero" id="genero" /></td>
+        </tr>
+        <tr>
+            <td><label for="anoPublicacion">Año de Publicación:</label></td>
+            <td><input type="number" @bind="anoPublicacion" id="anoPublicacion" /></td>
+        </tr>
+    </table>
+}
+else if (tipoMaterial == "Revista")
+{
+    <table>
+        <tr>
+            <td><label for="titulo">Título:</label></td>
+            <td><input type="text" @bind="titulo" id="titulo" /></td>
+        </tr>
+        <tr>
+            <td><label for="autor">Autor:</label></td>
+            <td><input type="text" @bind="autor" id="autor" /></td>
+        </tr>
+        <tr>
+            <td><label for="genero">Género:</label></td>
+            <td><input type="text" @bind="genero" id="genero" /></td>
+        </tr>
+        <tr>
+            <td><label for="anoPublicacion">Año de Publicación:</label></td>
+            <td><input type="number" @bind="anoPublicacion" id="anoPublicacion" /></td>
+        </tr>
+        <tr>
+            <td><label for="volumen">Volumen:</label></td>
+            <td><input type="number" @bind="volumen" id="volumen" /></td>
+        </tr>
+        <tr>
+            <td><label for="numeroEjemplar">Número de Ejemplar:</label></td>
+            <td><input type="number" @bind="numeroEjemplar" id="numeroEjemplar" /></td>
+        </tr>
+    </table>
+}
+else if (tipoMaterial == "LibroElectronico")
+{
+    <table>
+        <tr>
+            <td><label for="titulo">Título:</label></td>
+            <td><input type="text" @bind="titulo" id="titulo" /></td>
+        </tr>
+        <tr>
+            <td><label for="autor">Autor:</label></td>
+            <td><input type="text" @bind="autor" id="autor" /></td>
+        </tr>
+        <tr>
+            <td><label for="genero">Género:</label></td>
+            <td><input type="text" @bind="genero" id="genero" /></td>
+        </tr>
+        <tr>
+            <td><label for="anoPublicacion">Año de Publicación:</label></td>
+            <td><input type="number" @bind="anoPublicacion" id="anoPublicacion" /></td>
+        </tr>
+        <tr>
+            <td><label for="formato">Formato:</label></td>
+            <td><input type="text" @bind="formato" id="formato" /></td>
+        </tr>
+        <tr>
+            <td><label for="tamanoArchivo">Tamaño del Archivo (MB):</label></td>
+            <td><input type="number" @bind="tamanoArchivo" id="tamanoArchivo" /></td>
+        </tr>
+    </table>
+}
+
+<button @onclick="Guardar">Guardar</button>
+
+@if (mensajeGuardado != null)
+{
+    <p>@mensajeGuardado</p>
+}
+
+<h3>Lista de Materiales</h3>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Título</th>
+            <th>Autor</th>
+            <th>Género</th>
+            <th>Año de Publicación</th>
+            <th>Detalles</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var material in materiales)
+        {
+            <tr>
+                <td>@material.Titulo</td>
+                <td>@material.Autor</td>
+                <td>@material.Genero</td>
+                <td>@material.AnoPublicacion</td>
+                <td>
+                    @if (material is Revista revista)
+                    {
+                        <div>Volumen: @revista.Volumen</div>
+                        <div>Número de Ejemplar: @revista.NumeroEjemplar</div>
+                    }
+                    else if (material is LibroElectronico libroElectronico)
+                    {
+                        <div>Formato: @libroElectronico.Formato</div>
+                        <div>Tamaño del Archivo: @libroElectronico.TamanoArchivo MB</div>
+                    }
+                </td>
+                <td>
+                    <button @onclick="@(() => Editar(material))">Editar</button>
+                    <button @onclick="@(() => Eliminar(material))">Eliminar</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+    private string tipoMaterial = "Libro";
+    private string titulo;
+    private string autor;
+    private string genero;
+    private int anoPublicacion;
+    private int volumen;
+    private int numeroEjemplar;
+    private string formato;
+    private double tamanoArchivo;
+    private string mensajeGuardado;
+
+    private List<Libro> materiales = new List<Libro>();
+
+    private void Guardar()
+    {
+        if (tipoMaterial == "Libro")
+        {
+            materiales.Add(new Libro { Titulo = titulo, Autor = autor, Genero = genero, AnoPublicacion = anoPublicacion });
+            mensajeGuardado = "Libro guardado";
+        }
+        else if (tipoMaterial == "Revista")
+        {
+            materiales.Add(new Revista { Titulo = titulo, Autor = autor, Genero = genero, AnoPublicacion = anoPublicacion, Volumen = volumen, NumeroEjemplar = numeroEjemplar });
+            mensajeGuardado = "Revista guardada";
+        }
+        else if (tipoMaterial == "LibroElectronico")
+        {
+            materiales.Add(new LibroElectronico { Titulo = titulo, Autor = autor, Genero = genero, AnoPublicacion = anoPublicacion, Formato = formato, TamanoArchivo = tamanoArchivo });
+            mensajeGuardado = "Libro digital guardado";
+        }
+
+        LimpiarFormulario();
+    }
+
+    private void LimpiarFormulario()
+    {
+        titulo = string.Empty;
+        autor = string.Empty;
+        genero = string.Empty;
+        anoPublicacion = 0;
+        volumen = 0;
+        numeroEjemplar = 0;
+        formato = string.Empty;
+        tamanoArchivo = 0;
+    }
+
+    private void Editar(Libro material)
+    {
+        
+    }
+
+    private void Eliminar(Libro material)
+    {
+        materiales.Remove(material);
+    }
+}
